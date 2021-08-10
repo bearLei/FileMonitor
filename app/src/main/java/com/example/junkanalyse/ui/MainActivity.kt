@@ -12,8 +12,6 @@ import com.example.junkanalyse.InjectUtils
 import com.example.junkanalyse.adapter.TargetAppInfoAdapter
 import com.example.junkanalyse.databinding.ActivityMainBinding
 import com.example.junkanalyse.db.entity.TargetAppInfoEntity
-import com.example.junkanalyse.service.Constant.ACTION_COMMAND_START
-import com.example.junkanalyse.service.Constant.EXTRA_FILE_PATH
 import com.example.junkanalyse.service.MonitorService
 import com.example.junkanalyse.view.DividerDrawable
 import com.example.junkanalyse.viewmodel.TargetAppInfoViewModel
@@ -40,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         iniViewModel()
         subscribeUi()
         registerListener()
+        val intent = Intent(this, MonitorService::class.java)
     }
 
     private fun iniViewModel() {
@@ -74,4 +73,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, EditActivity::class.java))
         }
     }
+
+
+
 }
