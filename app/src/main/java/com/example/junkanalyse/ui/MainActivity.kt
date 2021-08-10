@@ -35,14 +35,6 @@ class MainActivity : AppCompatActivity() {
         initData()
     }
 
-    var path = "/storage/emulated/0/Android/data/com.tencent.mobileqq/qzone"
-    private fun startMonitor() {
-        val intent = Intent(this, MonitorService::class.java)
-        intent.action = ACTION_COMMAND_START
-        intent.putExtra(EXTRA_FILE_PATH, path)
-        startService(intent)
-    }
-
     private fun initData() {
         initRecycleView()
         iniViewModel()
@@ -53,7 +45,7 @@ class MainActivity : AppCompatActivity() {
     private fun iniViewModel() {
         mTargetAppInfoViewModel = ViewModelProvider(
             this,
-            TargetAppInfoViewModel.GalleryViewModelFactory(InjectUtils.getTargetAppInfoRepository())
+            TargetAppInfoViewModel.TargetAppInfoViewModelFactory(InjectUtils.getTargetAppInfoRepository())
         ).get(TargetAppInfoViewModel::class.java)
     }
 

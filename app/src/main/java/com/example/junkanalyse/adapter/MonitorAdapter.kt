@@ -1,15 +1,13 @@
 package com.example.junkanalyse.adapter
 
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.junkanalyse.R
-import com.example.junkanalyse.db.entity.TargetAppInfoEntity
-import com.example.junkanalyse.ui.MonitorActivity
+import com.example.junkanalyse.db.entity.MonitorEntity
 
 /**
  * @author leix
@@ -17,31 +15,26 @@ import com.example.junkanalyse.ui.MonitorActivity
  * @createTime 2021/8/10 12:07
  * @desc
  */
-class TargetAppInfoAdapter constructor(
+class MonitorAdapter constructor(
     private val context: Context,
-    private val data: List<TargetAppInfoEntity>
+    private val data: List<MonitorEntity>
 ) :
-    RecyclerView.Adapter<TargetAppInfoAdapter.ViewHolder>() {
+    RecyclerView.Adapter<MonitorAdapter.ViewHolder>() {
 
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val nameTV: TextView = itemView.findViewById(R.id.name)
+        private val nameTV: TextView = itemView.findViewById(R.id.file_name)
         private val pathTV: TextView = itemView.findViewById(R.id.path)
-        fun setData(bean: TargetAppInfoEntity) {
-            nameTV.text = bean.appName
-            pathTV.text = bean.rootPath
-            itemView.setOnClickListener {
-                val intent = Intent(context, MonitorActivity::class.java)
-                intent.putExtra("bean", bean)
-                context.startActivity(intent)
-            }
+        fun setData(bean: MonitorEntity) {
+            nameTV.text = bean.fileName
+            pathTV.text = bean.path
         }
 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =
-            LayoutInflater.from(context).inflate(R.layout.adapter_target_app_info, null, false)
+            LayoutInflater.from(context).inflate(R.layout.adapter_item_monitor, null, false)
         return ViewHolder(view)
     }
 

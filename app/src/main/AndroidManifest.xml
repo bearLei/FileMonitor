@@ -28,7 +28,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.EditActivity"/>
+        <activity
+            android:name=".ui.EditActivity"
+            android:theme="@style/Theme.JunkAnalyse.NoActionBar" />
+        <activity
+            android:name=".ui.MonitorActivity"
+            android:theme="@style/Theme.JunkAnalyse.NoActionBar" />
+
         <service
             android:name=".service.MonitorService"
             android:enabled="true"

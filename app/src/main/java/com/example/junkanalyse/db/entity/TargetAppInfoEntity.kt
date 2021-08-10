@@ -3,6 +3,7 @@ package com.example.junkanalyse.db.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 import kotlin.random.Random
 
 /**
@@ -19,4 +20,4 @@ data class TargetAppInfoEntity(
     @PrimaryKey
     @ColumnInfo(name = "root_path")
     var rootPath: String
-)
+):Serializable

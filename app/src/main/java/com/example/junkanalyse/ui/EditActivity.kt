@@ -36,7 +36,7 @@ class EditActivity : AppCompatActivity() {
     private fun iniViewModel() {
         mTargetAppInfoViewModel = ViewModelProvider(
             this,
-            TargetAppInfoViewModel.GalleryViewModelFactory(InjectUtils.getTargetAppInfoRepository())
+            TargetAppInfoViewModel.TargetAppInfoViewModelFactory(InjectUtils.getTargetAppInfoRepository())
         ).get(TargetAppInfoViewModel::class.java)
     }
 
@@ -61,16 +61,10 @@ class EditActivity : AppCompatActivity() {
     private fun insertDefault() {
         mTargetAppInfoViewModel.insertTargetAppInfo(
             TargetAppInfoEntity(
-                rootPath = "/storage/emulated/0/Android/data/com.tencent.mobileqq/qzone",
-                appName = "手机QQ空间"
+                rootPath = "/storage/emulated/0/Android/data/com.tencent.mobileqq",
+                appName = "手机QQ"
             )
         )
 
-        mTargetAppInfoViewModel.insertTargetAppInfo(
-            TargetAppInfoEntity(
-                rootPath = "/storage/emulated/0/Android/data/com.tencent.mobileqq/cache",
-                appName = "手机QQ缓存"
-            )
-        )
     }
 }

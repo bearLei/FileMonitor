@@ -16,12 +16,14 @@ class TargetAppInfoViewModel(private val repository: TargetAppInfoRepository) : 
 
     val allData: LiveData<List<TargetAppInfoEntity>> = repository.allData
 
+
     fun insertTargetAppInfo(bean: TargetAppInfoEntity) {
         repository.insertTargetAppInfo(bean)
     }
 
 
-    class GalleryViewModelFactory(private val repository: TargetAppInfoRepository) :
+
+    class TargetAppInfoViewModelFactory(private val repository: TargetAppInfoRepository) :
         ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             @Suppress("UNCHECKED_CAST")

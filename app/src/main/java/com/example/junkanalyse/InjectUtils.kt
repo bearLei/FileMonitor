@@ -1,6 +1,7 @@
 package com.example.junkanalyse
 
 import com.example.junkanalyse.db.JDataBase
+import com.example.junkanalyse.repository.MonitorRepository
 import com.example.junkanalyse.repository.TargetAppInfoRepository
 
 /**
@@ -13,5 +14,9 @@ object InjectUtils {
 
     fun getTargetAppInfoRepository(): TargetAppInfoRepository {
         return TargetAppInfoRepository(JDataBase.getInstance().targetAppInfoDao())
+    }
+
+    fun getMonitorRepository(): MonitorRepository {
+        return MonitorRepository(JDataBase.getInstance().monitorDao())
     }
 }
