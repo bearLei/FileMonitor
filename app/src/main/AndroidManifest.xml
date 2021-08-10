@@ -11,6 +11,7 @@
         tools:ignore="ProtectedPermissions"></uses-permission>
 
     <application
+        android:name=".JApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -18,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.JunkAnalyse">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.JunkAnalyse.NoActionBar">
             <intent-filter>
@@ -27,6 +28,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.EditActivity"/>
         <service
             android:name=".service.MonitorService"
             android:enabled="true"
