@@ -16,8 +16,12 @@ import com.example.junkanalyse.adapter.MonitorAdapter
 import com.example.junkanalyse.databinding.ActivityMonitorBinding
 import com.example.junkanalyse.db.entity.MonitorEntity
 import com.example.junkanalyse.db.entity.TargetAppInfoEntity
+import com.example.junkanalyse.job.CalculateFileSizeCreate
+import com.example.junkanalyse.job.CalculateFileSizeJob
+import com.example.junkanalyse.job.JobChain
 import com.example.junkanalyse.service.Constant
 import com.example.junkanalyse.service.MonitorService
+import com.example.junkanalyse.util.FileUtils
 import com.example.junkanalyse.view.DividerDrawable
 import com.example.junkanalyse.viewmodel.MonitorViewModel
 
@@ -51,12 +55,12 @@ class MonitorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMonitorBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        parseIntent()
-        initView()
-        registerListener()
-        iniViewModel()
-        subscribeUi()
-        bindService()
+        initData()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        initData()
     }
 
     override fun onDestroy() {
@@ -64,6 +68,14 @@ class MonitorActivity : AppCompatActivity() {
         unbindService(serviceConnection)
     }
 
+    private fun initData() {
+        parseIntent()
+        initView()
+        registerListener()
+        iniViewModel()
+        subscribeUi()
+        bindService()
+    }
 
     private fun parseIntent() {
         mBean = intent.getSerializableExtra("bean") as TargetAppInfoEntity?
@@ -114,9 +126,11 @@ class MonitorActivity : AppCompatActivity() {
             }
         }
 
-        binding.removeAll.setOnClickListener {
-            mBean?.rootPath?.let {
-                mMonitorViewModel.deleteAll()
+        binding.count.setOnClickListener {
+            for (bean in mData) {
+                if (FileUtils.isDir(bean.path)) {
+                    JobChain.newInstance().addJob(CalculateFileSizeCreate(bean).create())
+                }
             }
         }
     }

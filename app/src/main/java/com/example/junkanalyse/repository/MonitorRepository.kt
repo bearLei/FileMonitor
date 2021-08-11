@@ -22,6 +22,9 @@ class MonitorRepository(private val mDao: MonitorDao) {
         }
     }
 
+    fun update(bean: MonitorEntity){
+
+    }
     fun queryDataByParentPath(parentPath: String): LiveData<List<MonitorEntity>> {
         return mDao.queryDataByParentPath(parentPath)
     }

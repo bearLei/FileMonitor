@@ -1,0 +1,107 @@
+package com.example.junkanalyse.util
+
+import java.io.File
+import java.util.*
+
+/**
+ * @author leix
+ * @version 1
+ * @createTime 2021/8/10 18:31
+ * @desc
+ */
+object FileUtils {
+
+    fun isDir(path: String): Boolean {
+        val file = File(path)
+        return file.exists() && file.isDirectory
+    }
+
+    fun isDir(file: File?): Boolean {
+        return file != null && file.exists() && file.isDirectory
+    }
+
+    fun isFile(path: String): Boolean {
+        val file = File(path)
+        return file.exists() && file.isFile
+    }
+
+    fun isFile(file: File?): Boolean {
+        return file != null && file.exists() && file.isFile
+    }
+
+   fun getDirLength(dir: File): Long {
+        if (!isDir(dir)) return 0
+        var len: Long = 0
+        val files = dir.listFiles()
+        if (files != null && files.isNotEmpty()) {
+            for (file in files) {
+                len += if (file.isDirectory) {
+                    getDirLength(file)
+                } else {
+                    file.length()
+                }
+            }
+        }
+        return len
+    }
+
+     fun getFileLength(file: File?): Long {
+        return if (file != null && isFile(file)) {
+            file.length()
+        } else {
+            0
+        }
+    }
+
+    fun getFileSizeText(size: Long): String {
+        return when {
+            size < 1000 -> {
+                //999B
+                String.format(Locale.getDefault(), "%dB", size)
+            }
+            size < 10 * 1024L -> {
+                //9.99KB
+                String.format(Locale.getDefault(), "%1.2fKB", size / 1024f)
+            }
+            size < 100 * 1024L -> {
+                //99.9KB
+                String.format(Locale.getDefault(), "%1.1fKB", size / 1024f)
+            }
+            size < 1000 * 1024L -> {
+                //999KB
+                String.format(Locale.getDefault(), "%dKB", (size / 1024f).toInt())
+            }
+            size < 10 * 1024 * 1024L -> {
+                //9.99MB
+                String.format(Locale.getDefault(), "%1.2fMB", size / 1024f / 1024)
+            }
+            size < 100 * 1024 * 1024L -> {
+                //99.9MB
+                String.format(Locale.getDefault(), "%1.1fMB", size / 1024f / 1024)
+            }
+            size < 1000 * 1024 * 1024L -> {
+                //999MB
+                String.format(Locale.getDefault(), "%dMB", (size / 1024f / 1024).toInt())
+            }
+            size < 10 * 1024 * 1024 * 1024L -> {
+                //9.99GB
+                String.format(Locale.getDefault(), "%1.2fGB", size / 1024f / 1024 / 1024)
+            }
+            size < 100 * 1024 * 1024 * 1024L -> {
+                //99.9GB
+                String.format(Locale.getDefault(), "%1.1fGB", size / 1024f / 1024 / 1024)
+            }
+            size < 1000 * 1024 * 1024 * 1024L -> {
+                //999GB
+                String.format(Locale.getDefault(), "%dGB", (size / 1024f / 1024 / 1024).toInt())
+            }
+            else -> {
+                String.format(
+                    Locale.getDefault(),
+                    "%1.2fTB",
+                    size / 1024f / 1024 / 1024 / 1024
+                )
+            }
+        }
+    }
+}

@@ -17,5 +17,13 @@ class MonitorEntity(
     @ColumnInfo(name = "path") var path: String = "",//绝对路径
     @ColumnInfo(name = "parentPath") var parentPath: String = "",//父路径
     @ColumnInfo(name = "file_name") var fileName: String = "",
-    @ColumnInfo(name = "type") var type: Int = 0
-) : Serializable
+    @ColumnInfo(name = "type") var type: Int = 0,
+    @ColumnInfo(name = "size") var size: Long = 0,
+    @ColumnInfo(name = "updateTime") var updateTime: Long = 0
+) : Serializable {
+
+
+    fun isMayCouldRecycled(): Boolean {
+        return path.contains("cache")
+    }
+}

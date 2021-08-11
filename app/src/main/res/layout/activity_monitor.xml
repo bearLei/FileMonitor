@@ -71,7 +71,7 @@
         app:layout_constraintTop_toBottomOf="@id/monitor_path" />
 
     <TextView
-        android:id="@+id/remove_all"
+        android:id="@+id/count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
@@ -82,7 +82,7 @@
         android:paddingTop="5dp"
         android:paddingRight="15dp"
         android:paddingBottom="5dp"
-        android:text="移除全部文件"
+        android:text="计算大小"
         android:textColor="#ffffff"
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="parent"

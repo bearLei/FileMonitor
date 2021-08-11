@@ -8,6 +8,7 @@ import android.util.Log
 import com.example.junkanalyse.IMonitorAidl
 import com.example.junkanalyse.InjectUtils
 import com.example.junkanalyse.db.entity.MonitorEntity
+import com.example.junkanalyse.util.FileUtils
 
 
 /**
@@ -30,13 +31,7 @@ class MonitorService : Service() {
             Log.d(TAG, "接收到指令：$cmd---path:-->$path")
             when (cmd) {
                 Constant.CMD_ADD_MONITOR -> {
-                    path?.let {
-                        if (mFileObserverMap[path] == null) {
-                            val generateFileObserver = generateFileObserver(path)
-                            mFileObserverMap[path] = generateFileObserver
-                        }
-                        startObservers()
-                    }
+                    checkBeforeStart(path)
                 }
             }
 
@@ -45,6 +40,16 @@ class MonitorService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? {
         return stub
+    }
+
+    private fun checkBeforeStart(path: String?) {
+        path?.let {
+            if (mFileObserverMap[path] == null) {
+                val generateFileObserver = generateFileObserver(path)
+                mFileObserverMap[path] = generateFileObserver
+            }
+            startObservers()
+        }
     }
 
     private fun startObservers() {
@@ -80,13 +85,18 @@ class MonitorService : Service() {
                     CREATE -> {
                         path?.let {
                             Log.d(TAG, "创建文件：$path")
+                            val abPath = "$rootPath/$it"
                             insert(
                                 MonitorEntity(
-                                    "$rootPath/$it",
+                                    abPath,
                                     parentPath = rootPath,
-                                    fileName = it
+                                    fileName = it,updateTime = System.currentTimeMillis()
                                 )
                             )
+                            if (FileUtils.isDir(abPath)) {
+                                Log.d(TAG,"$abPath----->是文件夹，添加监测")
+                                checkBeforeStart(abPath)
+                            }
                         }
                     }
                 }
