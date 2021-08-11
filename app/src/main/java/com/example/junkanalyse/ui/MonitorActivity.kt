@@ -1,26 +1,19 @@
 package com.example.junkanalyse.ui
 
-import android.content.ComponentName
 import android.content.Intent
-import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.IBinder
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.junkanalyse.IMonitorAidl
 import com.example.junkanalyse.InjectUtils
 import com.example.junkanalyse.adapter.MonitorAdapter
 import com.example.junkanalyse.databinding.ActivityMonitorBinding
 import com.example.junkanalyse.db.entity.MonitorEntity
 import com.example.junkanalyse.db.entity.TargetAppInfoEntity
 import com.example.junkanalyse.job.CalculateFileSizeCreate
-import com.example.junkanalyse.job.CalculateFileSizeJob
 import com.example.junkanalyse.job.JobChain
-import com.example.junkanalyse.service.Constant
-import com.example.junkanalyse.service.MonitorService
 import com.example.junkanalyse.util.FileUtils
 import com.example.junkanalyse.view.DividerDrawable
 import com.example.junkanalyse.viewmodel.MonitorViewModel
@@ -40,16 +33,6 @@ class MonitorActivity : AppCompatActivity() {
     private val mData = ArrayList<MonitorEntity>()
     private lateinit var mMonitorViewModel: MonitorViewModel
 
-    var monitorAidl: IMonitorAidl? = null
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            monitorAidl = IMonitorAidl.Stub.asInterface(service)
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,10 +46,6 @@ class MonitorActivity : AppCompatActivity() {
         initData()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        unbindService(serviceConnection)
-    }
 
     private fun initData() {
         parseIntent()
@@ -74,7 +53,6 @@ class MonitorActivity : AppCompatActivity() {
         registerListener()
         iniViewModel()
         subscribeUi()
-        bindService()
     }
 
     private fun parseIntent() {
@@ -120,12 +98,6 @@ class MonitorActivity : AppCompatActivity() {
     }
 
     private fun registerListener() {
-        binding.startMonitor.setOnClickListener {
-            mBean?.rootPath?.let {
-                monitorAidl?.sendData(Constant.CMD_ADD_MONITOR, it)
-            }
-        }
-
         binding.count.setOnClickListener {
             for (bean in mData) {
                 if (FileUtils.isDir(bean.path)) {
@@ -135,8 +107,4 @@ class MonitorActivity : AppCompatActivity() {
         }
     }
 
-    private fun bindService() {
-        val intent = Intent(this, MonitorService::class.java)
-        bindService(intent, serviceConnection, BIND_AUTO_CREATE)
-    }
 }

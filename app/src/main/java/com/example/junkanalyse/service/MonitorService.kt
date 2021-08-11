@@ -31,7 +31,12 @@ class MonitorService : Service() {
             Log.d(TAG, "接收到指令：$cmd---path:-->$path")
             when (cmd) {
                 Constant.CMD_ADD_MONITOR -> {
-                    checkBeforeStart(path)
+                    mFileObserverMap.clear()
+                    path?.let {
+                        val generateFileObserver = generateFileObserver(it)
+                        mFileObserverMap[it] = generateFileObserver
+                        startObservers()
+                    }
                 }
             }
 
@@ -90,11 +95,11 @@ class MonitorService : Service() {
                                 MonitorEntity(
                                     abPath,
                                     parentPath = rootPath,
-                                    fileName = it,updateTime = System.currentTimeMillis()
+                                    fileName = it, updateTime = System.currentTimeMillis()
                                 )
                             )
                             if (FileUtils.isDir(abPath)) {
-                                Log.d(TAG,"$abPath----->是文件夹，添加监测")
+                                Log.d(TAG, "$abPath----->是文件夹，添加监测")
                                 checkBeforeStart(abPath)
                             }
                         }

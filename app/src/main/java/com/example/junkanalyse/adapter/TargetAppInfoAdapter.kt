@@ -23,6 +23,7 @@ class TargetAppInfoAdapter constructor(
 ) :
     RecyclerView.Adapter<TargetAppInfoAdapter.ViewHolder>() {
 
+    private var mItemClickListener: OnItemClickListener? = null
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nameTV: TextView = itemView.findViewById(R.id.name)
@@ -31,9 +32,10 @@ class TargetAppInfoAdapter constructor(
             nameTV.text = bean.appName
             pathTV.text = bean.rootPath
             itemView.setOnClickListener {
-                val intent = Intent(context, MonitorActivity::class.java)
-                intent.putExtra("bean", bean)
-                context.startActivity(intent)
+//                val intent = Intent(context, MonitorActivity::class.java)
+//                intent.putExtra("bean", bean)
+//                context.startActivity(intent)
+                mItemClickListener?.onItemClick(bean)
             }
         }
 
@@ -51,6 +53,14 @@ class TargetAppInfoAdapter constructor(
 
     override fun getItemCount(): Int {
         return data.size
+    }
+
+    public fun registerItemClickListener(itemClickListener: OnItemClickListener) {
+        this.mItemClickListener = itemClickListener
+    }
+
+    interface OnItemClickListener {
+        fun onItemClick(bean: TargetAppInfoEntity)
     }
 
 }

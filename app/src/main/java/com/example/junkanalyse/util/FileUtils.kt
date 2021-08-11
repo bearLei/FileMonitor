@@ -1,6 +1,8 @@
 package com.example.junkanalyse.util
 
+import android.util.Log
 import java.io.File
+import java.io.FileFilter
 import java.util.*
 
 /**
@@ -29,7 +31,7 @@ object FileUtils {
         return file != null && file.exists() && file.isFile
     }
 
-   fun getDirLength(dir: File): Long {
+    fun getDirLength(dir: File): Long {
         if (!isDir(dir)) return 0
         var len: Long = 0
         val files = dir.listFiles()
@@ -45,7 +47,7 @@ object FileUtils {
         return len
     }
 
-     fun getFileLength(file: File?): Long {
+    fun getFileLength(file: File?): Long {
         return if (file != null && isFile(file)) {
             file.length()
         } else {
@@ -103,5 +105,55 @@ object FileUtils {
                 )
             }
         }
+    }
+
+    fun deleteFilesInDir(dir: File?): Boolean {
+        return deleteFilesInDirWithFilter(dir, object : FileFilter {
+            override fun accept(pathname: File): Boolean {
+                return pathname.isFile
+            }
+        })
+    }
+
+    fun deleteFilesInDirWithFilter(dir: File?, filter: FileFilter?): Boolean {
+        if (dir == null || filter == null) return false
+        // dir doesn't exist then return true
+        if (!dir.exists()) return true
+        // dir isn't a directory then return false
+        if (!dir.isDirectory) return false
+        val files = dir.listFiles()
+        if (files != null && files.isNotEmpty()) {
+            for (file in files) {
+                try {
+                    if (file.isFile) {
+                        if (!file.delete()) return false
+                    } else if (file.isDirectory) {
+                        if (!deleteDir(file)) return false
+                    }
+                } catch (e: Exception) {
+                    Log.d("leix", "delete error:" + e.message)
+                }
+            }
+        }
+        return true
+    }
+
+    private fun deleteDir(dir: File?): Boolean {
+        if (dir == null) return false
+        // dir doesn't exist then return true
+        if (!dir.exists()) return true
+        // dir isn't a directory then return false
+        if (!dir.isDirectory) return false
+        val files = dir.listFiles()
+        if (files != null && files.isNotEmpty()) {
+            for (file in files) {
+                if (file.isFile) {
+                    if (!file.delete()) return false
+                } else if (file.isDirectory) {
+                    if (!deleteDir(file)) return false
+                }
+            }
+        }
+        return dir.delete()
     }
 }

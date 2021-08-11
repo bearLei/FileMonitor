@@ -28,4 +28,5 @@ interface MonitorDao {
 
     @Query("DELETE FROM monitor_table")
     suspend fun deleteAll()
+
 }
