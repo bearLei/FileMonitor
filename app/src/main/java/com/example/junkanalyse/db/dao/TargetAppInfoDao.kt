@@ -22,4 +22,7 @@ interface TargetAppInfoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(bean: TargetAppInfoEntity):Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertList(bean: List<TargetAppInfoEntity>)
+
 }

@@ -23,6 +23,9 @@ interface MonitorDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(bean: MonitorEntity): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertList(bean: List<MonitorEntity>)
+
     @Query("DELETE FROM monitor_table where path = :path")
     suspend fun delete(path: String)
 

@@ -1,20 +1,25 @@
 package com.example.junkanalyse.ui
 
+import android.content.ComponentName
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
+import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.junkanalyse.IMonitorAidl
 import com.example.junkanalyse.InjectUtils
 import com.example.junkanalyse.adapter.MonitorAdapter
 import com.example.junkanalyse.databinding.ActivityMonitorBinding
 import com.example.junkanalyse.db.entity.MonitorEntity
 import com.example.junkanalyse.db.entity.TargetAppInfoEntity
-import com.example.junkanalyse.job.CalculateFileSizeCreate
-import com.example.junkanalyse.job.JobChain
-import com.example.junkanalyse.util.FileUtils
+import com.example.junkanalyse.service.Constant
+import com.example.junkanalyse.service.MonitorService
 import com.example.junkanalyse.view.DividerDrawable
 import com.example.junkanalyse.viewmodel.MonitorViewModel
 
@@ -26,13 +31,18 @@ import com.example.junkanalyse.viewmodel.MonitorViewModel
  */
 class MonitorActivity : AppCompatActivity() {
 
-    private var mBean: TargetAppInfoEntity? = null
 
+    companion object {
+        const val SPIL = "/"
+    }
+
+    private var mBean: TargetAppInfoEntity? = null
     private lateinit var binding: ActivityMonitorBinding
     private lateinit var mAdapter: MonitorAdapter
     private val mData = ArrayList<MonitorEntity>()
     private lateinit var mMonitorViewModel: MonitorViewModel
-
+    private var mShowTop: Boolean = true
+    private var mRootPath: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,14 +63,22 @@ class MonitorActivity : AppCompatActivity() {
         registerListener()
         iniViewModel()
         subscribeUi()
+        bindService()
     }
 
     private fun parseIntent() {
         mBean = intent.getSerializableExtra("bean") as TargetAppInfoEntity?
+        mShowTop = intent.getBooleanExtra("showTop", true)
         mBean?.let {
+            mRootPath = it.rootPath
             binding.monitorName.text = it.appName
             binding.monitorPath.text = it.rootPath
-            binding.appName.text = it.appName
+            binding.parentPath.text = it.rootPath
+        }
+        if (mShowTop) {
+            binding.topGroup.visibility = View.VISIBLE
+        } else {
+            binding.topGroup.visibility = View.GONE
         }
     }
 
@@ -88,22 +106,90 @@ class MonitorActivity : AppCompatActivity() {
 
     private fun subscribeUi() {
         mBean?.rootPath?.let {
-            mMonitorViewModel.getQueryDataByParentPath(it)
+            mMonitorViewModel.getQueryDataByParentPath(mRootPath)
                 .observe(this@MonitorActivity, { data ->
                     mData.clear()
                     mData.addAll(data)
                     mAdapter.notifyDataSetChanged()
+                    binding.showResult.text = "本页数量：${mData.size}"
                 })
         }
     }
 
     private fun registerListener() {
-        binding.count.setOnClickListener {
-            for (bean in mData) {
-                if (FileUtils.isDir(bean.path)) {
-                    JobChain.newInstance().addJob(CalculateFileSizeCreate(bean).create())
+
+        binding.stop.setOnClickListener {
+            unBind()
+        }
+        binding.start.setOnClickListener {
+            mBean?.rootPath?.let {
+                monitorAidl?.sendData(Constant.CMD_START_MONITOR, it)
+            }
+        }
+        binding.getResult.setOnClickListener {
+            val result = monitorAidl?.result
+            Log.d("leix", "获取的结果:$result")
+            result?.let {
+                filterData(result)
+            }
+            for (bean in mResultData) {
+                InjectUtils.getMonitorRepository().insert(bean)
+            }
+        }
+    }
+
+
+    //服务相关
+    var monitorAidl: IMonitorAidl? = null
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            monitorAidl = IMonitorAidl.Stub.asInterface(service)
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+
+        }
+    }
+
+    private fun bindService() {
+        val intent = Intent(this, MonitorService::class.java)
+        bindService(intent, serviceConnection, BIND_AUTO_CREATE)
+    }
+
+    private fun unBind() {
+        unbindService(serviceConnection)
+    }
+
+    private var mResultData = mutableListOf<MonitorEntity>()
+
+    private fun filterData(list: MutableList<String>) {
+        for (str in list) {
+            checkParentPathExist(str)
+        }
+    }
+
+    private fun checkParentPathExist(path: String) {
+        val lastIndexOf = path.lastIndexOf(SPIL)//先找最后1个截断点
+        if (lastIndexOf != -1) {
+            val parentPath = path.subSequence(0, lastIndexOf).toString()
+            val fileName = path.substring(lastIndexOf, path.length)
+            var exist = false
+            for (bean in mResultData) {
+                if (bean.path == path) {
+                    exist = true
                 }
             }
+            if (!exist) {
+                checkParentPathExist(parentPath)
+            }
+            mResultData.add(
+                MonitorEntity(
+                    parentPath = parentPath,
+                    path = path,
+                    fileName = fileName,
+                    updateTime = System.currentTimeMillis()
+                )
+            )
         }
     }
 

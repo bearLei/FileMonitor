@@ -5,30 +5,21 @@
     android:layout_height="match_parent"
     android:background="#ededed">
 
-    <RelativeLayout
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginLeft="15dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_centerVertical="true"
-            android:scaleType="center"
-            android:src="@drawable/back" />
 
         <TextView
-            android:id="@+id/app_name"
+            android:id="@+id/parent_path"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
             android:textColor="#333333"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
-    </RelativeLayout>
 
     <TextView
         android:id="@+id/monitor_name"
@@ -39,7 +30,7 @@
         android:textColor="#333333"
         android:textSize="20sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header" />
+        app:layout_constraintTop_toBottomOf="@id/parent_path" />
 
     <TextView
         android:id="@+id/monitor_path"
@@ -52,26 +43,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/monitor_name" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/start_monitor"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginLeft="15dp"-->
-<!--        android:layout_marginTop="15dp"-->
-<!--        android:layout_marginRight="15dp"-->
-<!--        android:background="@drawable/shape_normal_btn"-->
-<!--        android:paddingLeft="15dp"-->
-<!--        android:paddingTop="5dp"-->
-<!--        android:paddingRight="15dp"-->
-<!--        android:paddingBottom="5dp"-->
-<!--        android:text="开始监控"-->
-<!--        android:textColor="#ffffff"-->
-<!--        android:textSize="18sp"-->
-<!--        app:layout_constraintRight_toRightOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/monitor_path" />-->
-
     <TextView
-        android:id="@+id/count"
+        android:id="@+id/start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
@@ -82,7 +55,58 @@
         android:paddingTop="5dp"
         android:paddingRight="15dp"
         android:paddingBottom="5dp"
-        android:text="计算大小"
+        android:text="开始监控"
+        android:textColor="#ffffff"
+        android:textSize="18sp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/monitor_path" />
+
+    <TextView
+        android:id="@+id/getResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/shape_normal_btn"
+        android:paddingLeft="15dp"
+        android:paddingTop="5dp"
+        android:paddingRight="15dp"
+        android:paddingBottom="5dp"
+        android:text="获取清理结果"
+        android:textColor="#ffffff"
+        android:textSize="18sp"
+        app:layout_constraintRight_toLeftOf="@id/start"
+        app:layout_constraintTop_toBottomOf="@id/start" />
+
+    <TextView
+        android:id="@+id/showResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="15dp"
+        android:paddingLeft="15dp"
+        android:paddingTop="5dp"
+        android:paddingRight="15dp"
+        android:paddingBottom="5dp"
+        android:textColor="#333333"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/getResult" />
+
+    <TextView
+        android:id="@+id/stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/shape_normal_btn"
+        android:paddingLeft="15dp"
+        android:paddingTop="5dp"
+        android:paddingRight="15dp"
+        android:paddingBottom="5dp"
+        android:text="停止监控"
         android:textColor="#ffffff"
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -96,7 +120,12 @@
         android:layout_marginTop="15dp"
         android:layout_marginRight="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/count" />
+        app:layout_constraintTop_toBottomOf="@id/showResult" />
 
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/top_group"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:constraint_referenced_ids="monitor_name,monitor_path,start,stop,getResult,,monitor_path" />
 </androidx.constraintlayout.widget.ConstraintLayout>

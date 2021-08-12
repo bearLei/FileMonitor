@@ -22,4 +22,10 @@ class TargetAppInfoRepository(private val mDao: TargetAppInfoDao) {
         }
     }
 
+    fun insertList(list:List<TargetAppInfoEntity>){
+        GlobalScope.launch {
+            mDao.insertList(list)
+        }
+    }
+
 }

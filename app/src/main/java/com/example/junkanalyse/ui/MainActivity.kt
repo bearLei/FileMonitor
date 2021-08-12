@@ -20,6 +20,7 @@ import com.example.junkanalyse.databinding.ActivityMainBinding
 import com.example.junkanalyse.db.entity.TargetAppInfoEntity
 import com.example.junkanalyse.service.Constant
 import com.example.junkanalyse.service.MonitorService
+import com.example.junkanalyse.util.AppUtil
 import com.example.junkanalyse.util.FileUtils
 import com.example.junkanalyse.view.DividerDrawable
 import com.example.junkanalyse.viewmodel.TargetAppInfoViewModel
@@ -53,13 +54,8 @@ class MainActivity : AppCompatActivity() {
         iniViewModel()
         subscribeUi()
         registerListener()
-        bindService()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        unBind()
-    }
 
     private fun iniViewModel() {
         mTargetAppInfoViewModel = ViewModelProvider(
@@ -74,6 +70,8 @@ class MainActivity : AppCompatActivity() {
             mData.addAll(it)
             mAdapter.notifyDataSetChanged()
         })
+
+        AppUtil.scan()
     }
 
     private fun initRecycleView() {
@@ -114,11 +112,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun startMonitor(bean: TargetAppInfoEntity) {
         GlobalScope.launch {
-            InjectUtils.getMonitorRepository().deleteAll()
-            FileUtils.deleteFilesInDir(File(bean.rootPath))
+//            InjectUtils.getMonitorRepository().deleteAll()
+//            FileUtils.deleteFilesInDir(File(bean.rootPath))
             withContext(Dispatchers.Main) {
                 mCurrentMonitorBean = bean
-                monitorAidl?.sendData(Constant.CMD_ADD_MONITOR, bean.rootPath)
                 val intent = Intent(this@MainActivity, MonitorActivity::class.java)
                 intent.putExtra("bean", bean)
                 startActivity(intent)
@@ -126,24 +123,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //服务相关
-    var monitorAidl: IMonitorAidl? = null
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            monitorAidl = IMonitorAidl.Stub.asInterface(service)
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-
-        }
-    }
-
-    private fun bindService() {
-        val intent = Intent(this, MonitorService::class.java)
-        bindService(intent, serviceConnection, BIND_AUTO_CREATE)
-    }
-
-    private fun unBind() {
-        unbindService(serviceConnection)
-    }
 }

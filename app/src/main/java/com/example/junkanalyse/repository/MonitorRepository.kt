@@ -22,9 +22,16 @@ class MonitorRepository(private val mDao: MonitorDao) {
         }
     }
 
-    fun update(bean: MonitorEntity){
+    fun insertList(list: List<MonitorEntity>) {
+        GlobalScope.launch {
+            mDao.insertList(list)
+        }
+    }
+
+    fun update(bean: MonitorEntity) {
 
     }
+
     fun queryDataByParentPath(parentPath: String): LiveData<List<MonitorEntity>> {
         return mDao.queryDataByParentPath(parentPath)
     }

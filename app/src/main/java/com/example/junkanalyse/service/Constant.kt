@@ -8,5 +8,7 @@ package com.example.junkanalyse.service
  */
 object Constant {
 
-    val CMD_ADD_MONITOR = 100
+    val CMD_START_MONITOR = 100
+
+    val CMD_STOP_MONITOR = 200
 }

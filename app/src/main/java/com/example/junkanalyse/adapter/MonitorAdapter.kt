@@ -31,33 +31,24 @@ class MonitorAdapter constructor(
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nameTV: TextView = itemView.findViewById(R.id.file_name)
         private val pathTV: TextView = itemView.findViewById(R.id.path)
-        private val fileType: ImageView = itemView.findViewById(R.id.file_type)
         private val timeTV: TextView = itemView.findViewById(R.id.update_time)
-        private val sizeTV: TextView = itemView.findViewById(R.id.size)
+
         fun setData(bean: MonitorEntity) {
             nameTV.text = bean.fileName
             pathTV.text = bean.path
-            if (FileUtils.isDir(bean.path)) {
-                fileType.setBackgroundResource(R.drawable.file_folder)
-                sizeTV.text = FileUtils.getFileSizeText(bean.size)
-            } else {
-                fileType.setBackgroundResource(R.drawable.file_icon)
-                sizeTV.text = "unCalculate"
-            }
-            if (bean.isMayCouldRecycled()){
+            if (bean.isMayCouldRecycled()) {
                 nameTV.setTextColor(context.resources.getColor(R.color.base_color_d81e06))
-            }else{
+            } else {
                 nameTV.setTextColor(context.resources.getColor(R.color.base_color_4577dc))
             }
             timeTV.text = TimeUtils.getNowTimeString(bean.updateTime)
             itemView.setOnClickListener {
-                if (FileUtils.isDir(bean.path)) {
-                    val targetAppInfoBean =
-                        TargetAppInfoEntity(appName = bean.fileName, rootPath = bean.path)
-                    val intent = Intent(context, MonitorActivity::class.java)
-                    intent.putExtra("bean", targetAppInfoBean)
-                    context.startActivity(intent)
-                }
+                val targetAppInfoBean =
+                    TargetAppInfoEntity(appName = bean.fileName, rootPath = bean.path)
+                val intent = Intent(context, MonitorActivity::class.java)
+                intent.putExtra("bean", targetAppInfoBean)
+                intent.putExtra("showTop", false)
+                context.startActivity(intent)
             }
         }
 
