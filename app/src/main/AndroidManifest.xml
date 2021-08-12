@@ -37,6 +37,7 @@
 
         <service
             android:name=".service.MonitorService"
+            android:process=":remote"
             android:enabled="true"
             android:exported="true"></service>
 

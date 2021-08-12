@@ -36,11 +36,6 @@ class MonitorAdapter constructor(
         fun setData(bean: MonitorEntity) {
             nameTV.text = bean.fileName
             pathTV.text = bean.path
-            if (bean.isMayCouldRecycled()) {
-                nameTV.setTextColor(context.resources.getColor(R.color.base_color_d81e06))
-            } else {
-                nameTV.setTextColor(context.resources.getColor(R.color.base_color_4577dc))
-            }
             timeTV.text = TimeUtils.getNowTimeString(bean.updateTime)
             itemView.setOnClickListener {
                 val targetAppInfoBean =

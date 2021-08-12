@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -22,6 +21,7 @@ import com.example.junkanalyse.service.Constant
 import com.example.junkanalyse.service.MonitorService
 import com.example.junkanalyse.view.DividerDrawable
 import com.example.junkanalyse.viewmodel.MonitorViewModel
+import kotlin.properties.Delegates
 
 /**
  * @author leix
@@ -43,6 +43,15 @@ class MonitorActivity : AppCompatActivity() {
     private lateinit var mMonitorViewModel: MonitorViewModel
     private var mShowTop: Boolean = true
     private var mRootPath: String = ""
+    private var mIsMonitoring: Boolean by Delegates.observable(false, { _, _, isMonitoring ->
+        run {
+            if (isMonitoring) {
+                binding.start.text = "监控中"
+            } else {
+                binding.start.text = "开始监控"
+            }
+        }
+    })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,16 +128,21 @@ class MonitorActivity : AppCompatActivity() {
     private fun registerListener() {
 
         binding.stop.setOnClickListener {
-            unBind()
+            mIsMonitoring = false
+            unMonitor()
         }
         binding.start.setOnClickListener {
             mBean?.rootPath?.let {
+                if (mIsMonitoring) {
+                    return@let
+                }
+                mIsMonitoring = true
                 monitorAidl?.sendData(Constant.CMD_START_MONITOR, it)
             }
         }
         binding.getResult.setOnClickListener {
             val result = monitorAidl?.result
-            Log.d("leix", "获取的结果:$result")
+            binding.getResult.text = "获取数量：${result?.size}"
             result?.let {
                 filterData(result)
             }
@@ -156,8 +170,8 @@ class MonitorActivity : AppCompatActivity() {
         bindService(intent, serviceConnection, BIND_AUTO_CREATE)
     }
 
-    private fun unBind() {
-        unbindService(serviceConnection)
+    private fun unMonitor() {
+        monitorAidl?.sendData(Constant.CMD_STOP_MONITOR, "")
     }
 
     private var mResultData = mutableListOf<MonitorEntity>()
