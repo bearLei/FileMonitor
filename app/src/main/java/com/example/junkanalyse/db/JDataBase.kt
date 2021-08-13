@@ -4,8 +4,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.junkanalyse.JApplication
+import com.example.junkanalyse.db.dao.FileDao
 import com.example.junkanalyse.db.dao.MonitorDao
 import com.example.junkanalyse.db.dao.TargetAppInfoDao
+import com.example.junkanalyse.db.entity.FileEntity
 import com.example.junkanalyse.db.entity.MonitorEntity
 import com.example.junkanalyse.db.entity.TargetAppInfoEntity
 
@@ -16,7 +18,7 @@ import com.example.junkanalyse.db.entity.TargetAppInfoEntity
  * @desc
  */
 @Database(
-    entities = [TargetAppInfoEntity::class, MonitorEntity::class],
+    entities = [TargetAppInfoEntity::class, MonitorEntity::class,FileEntity::class],
     version = 1,
     exportSchema = false
 )
@@ -43,4 +45,5 @@ abstract class JDataBase : RoomDatabase() {
 
     abstract fun targetAppInfoDao(): TargetAppInfoDao
     abstract fun monitorDao():MonitorDao
+    abstract fun fileDao():FileDao
 }

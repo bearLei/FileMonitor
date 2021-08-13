@@ -34,12 +34,15 @@
         <activity
             android:name=".ui.MonitorActivity"
             android:theme="@style/Theme.JunkAnalyse.NoActionBar" />
+        <activity
+            android:name=".ui.MonitorFileActivity"
+            android:theme="@style/Theme.JunkAnalyse.NoActionBar" />
 
         <service
             android:name=".service.MonitorService"
-            android:process=":remote"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true"
+            android:process=":remote"></service>
 
     </application>
 

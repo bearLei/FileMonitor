@@ -1,5 +1,6 @@
 package com.example.junkanalyse.util
 
+import android.content.Context
 import android.util.Log
 import java.io.File
 import java.io.FileFilter
@@ -13,6 +14,12 @@ import java.util.*
  */
 object FileUtils {
 
+
+    fun isExists(path: String): Boolean {
+        val file = File(path)
+        return file.exists()
+    }
+
     fun isDir(path: String): Boolean {
         val file = File(path)
         return file.exists() && file.isDirectory
@@ -24,7 +31,7 @@ object FileUtils {
 
     fun isFile(path: String): Boolean {
         val file = File(path)
-        return file.exists() && file.isFile
+        return file.exists() && file.isFile && file.canRead()
     }
 
     fun isFile(file: File?): Boolean {
